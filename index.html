@@ -5,23 +5,46 @@
 	<title>Document</title>
 
 	<link rel="stylesheet" href="assets/css/reset.css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-	<form>
-		<label for="train-name">Train Name</label>
-	    <input id="train-name" type="text">
-	    <label for="destination">Destination</label>
-	    <input id="destination" type="text">
-	    <label for="period">Period (min)</label>
-	    <input id="period" type="text">
-	    <label for="arrival">Next Arrival</label>
-	    <input id="arrival" type="text">
-	    <button id="enter-button" class="btn btn-default" type="submit">search</button>
-	</form>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">title</div>
+			<div class="panel-body">
+				<table class="table">
+					<tr>
+						<th>Train Name</th>
+						<th>Destination</th>
+						<th>Period</th>
+						<th>Next Arrival</th>
+						<th>Minutes Away</th>
+					</tr>
+				</table>
+			</div>
+		</div>
 
 
+		<div class="panel panel-default">
+			<div class="panel-heading">title</div>
+			<div class="panel-body">
+				<form>
+					<label for="train-name">Train Name</label>
+				    <input id="train-name" type="text">
+				    <label for="destination">Destination</label>
+				    <input id="destination" type="text">
+				    <label for="period">Period (min)</label>
+				    <input id="period" type="text">
+				    <label for="departure">First Departure</label>
+				    <input id="departure" type="text">
+				    <button id="enter-button" class="btn btn-default" type="submit">search</button>
+				</form>
+			</div>	
+		</div>
+	</div>
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	 <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>	
 	<script type="text/javascript" src="assets/javascript/app.js"></script>
