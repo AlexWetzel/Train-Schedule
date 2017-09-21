@@ -1,14 +1,5 @@
-// to do
-
-// take the user inputs for tain name, destination, period, and next arrival
-// store the inputs in a new folder in firebase
-// use the current time and the next arrival to calculate when the next train will arrive, and refrech the time every minute.
-// use the period to calculate any subsequent arrival times
-// store the information for each train in a table, and append information for new trains
- moment().format();
-
- var config = {
-    apiKey: "AIzaSyBSi5gUKnWXOoR1fpB-AxELk8rNb6RoHtE",
+var config = {
+	apiKey: "AIzaSyBSi5gUKnWXOoR1fpB-AxELk8rNb6RoHtE",
     authDomain: "train-schedule-719ca.firebaseapp.com",
     databaseURL: "https://train-schedule-719ca.firebaseio.com",
     projectId: "train-schedule-719ca",
@@ -19,6 +10,7 @@ firebase.initializeApp(config);
 
 var db = firebase.database();
 
+//Converts a time of day into minutes
 function toMinutes(time){
 	var start = moment(time, "HH-mm");
 	var hours = parseInt(start.format("HH"));
@@ -26,38 +18,38 @@ function toMinutes(time){
 	return minutes + (hours * 60);
 }
 
+//Converts minutes to hours in military time
 function toHours(time){
-	if (time > 1440) {
-		time = time - 1440;
+	
+	//Prevents unintended behavior where the time would be greater than 23:59
+	if (time >= 1440) {
+		time = time % 1440;
 	}
 
 	var hours = Math.floor(time/60);
 	var minutes = time % 60;
+
+	hours = formatTime(hours);
+	minutes = formatTime(minutes);
+
 	return hours + ":" + minutes;
 }
 
-// function getNextArrival(time, period){
-// 	period = parseInt(period);
-// 	var startMin = toMinutes(time);
+//If the hours or minutes are less than 10, adds a zero to the value
+function formatTime(num) {
+	if(num < 10) {
+		num = "0" + num;
+	}
+	return num;
+}
 
-// 	var now = moment();
+//Orders the database entries in chronological order (by key) and adds them to the web page
+db.ref().orderByKey().on("child_added", function(snapshot) {
 
-// 	var currentMin = toMinutes(now);
-
-// 	if (currentMin < startMin) {
-// 		startMin += 1440;
-// 	}
-
-// 	var diff = currentMin - startMin;
-// 	var rem = diff % period;
-// 	var nextMin = currentMin + period - rem
-
-// 	console.log(startMin + " " + currentMin);
-// 	console.log(nextMin);
-// }
-
-db.ref().orderByKey().on("child_added", function(train) {
+	var train = snapshot.val();
    
+ /* Was trying to be neat here, but my code wouldn't work
+ ----------------------------------------
    // var cell = $("<td>");
    
    // var name = train.val().name;
@@ -71,47 +63,37 @@ db.ref().orderByKey().on("child_added", function(train) {
    // row.append(cell.text(period));
    // row.append(cell.text(nextarrival));
    //  console.log(name);
-
    // $("table").append(row);
-   	var time = train.val().departure;
-	var period = parseInt(train.val().period);
-	
+------------------------------------------*/   
+
+	var time = train.departure;
+	var period = parseInt(train.period);
+
 	var startMin = toMinutes(time);
 
 	var now = moment();
 
 	var currentMin = toMinutes(now);
 
+	//Accounts for the difference in time between days
 	if (currentMin < startMin) {
-		startMin += 1440;
+		currentMin += 1440;
 	}
 
-	var diff = currentMin - startMin;
+	var diff = currentMin - startMin;	
+
 	var rem = diff % period;
 	var nextMin = currentMin + period - rem;
 	var timeLeft = nextMin - currentMin;
 
-	console.log(startMin + " " + currentMin);
-	console.log(nextMin);
-
 	var nextTime = toHours(nextMin);
 
-	$("table").append("<tr><td>" + train.val().name + "</td><td>" + train.val().destination + "</td><td>" + train.val().period + "</td><td>" + nextTime + "</td><td>" + timeLeft + "</td></tr>")
-	
-	// getNextArrival(train.val().departure, train.val().period);
-	
+	$("table").append("<tr><td>" + train.name + "</td><td>" + train.destination + "</td><td>" + train.period + "</td><td>" + nextTime + "</td><td>" + timeLeft + "</td></tr>");
+}, function(errorObject){
+
 });
 
-// db.ref().on("value", function(snapshot) {
-//       //takes the click count from the database and writes it to the element id "click-value"
-//       // $("#click-value").html(snapshot.val().clickCount);
-//       //writes the database clickcounter to the web page
-//       count = snapshot.val().trainCount;
-//     }, function(errorObject) {
-//       //error message
-//       console.log("The read failed: " + errorObject.code);
-//     });
-
+//Gets the values from the form and adds them to the database
 $("#enter-button").on( "click", function(event) {
 	event.preventDefault();
 
@@ -120,6 +102,8 @@ $("#enter-button").on( "click", function(event) {
 	var periodIn = $("#period").val().trim();
 	var departureIn = $("#departure").val().trim();
 
+	console.log(nameIn);
+	
 	db.ref().push({
 		name: nameIn,
 		destination: destIn,
